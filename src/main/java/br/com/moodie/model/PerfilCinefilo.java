@@ -43,7 +43,7 @@ public class PerfilCinefilo {
 		historicoAssistidos.add(filmeId);
 	}
 	
-	public void setClassificacaoMaxima (ClassificacaoEtaria classsificacaoMaxima) {
+	public void setClassificacaoMaxima (ClassificacaoEtaria classificacaoMaxima) {
 		this.classificacaoMaxima = classificacaoMaxima;
 	}
 	
@@ -71,5 +71,9 @@ public class PerfilCinefilo {
 	}
 	public Integer getNotaPara(String filmeId) {
 		return notas.get(filmeId); // faz retorno de null se n tem nota
+	}
+	
+	public ClassificacaoEtaria getClassificacaoMaxima() {
+	    return classificacaoMaxima;
 	}
 }
