@@ -1,5 +1,7 @@
 package br.com.moodie.service;
 
-public interface NotificadorPush {
+import br.com.moodie.model.Usuario;
 
+public interface NotificadorPush {
+	void enviar(Usuario usuario);
 }

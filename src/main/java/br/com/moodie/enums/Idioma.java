@@ -1,8 +1,9 @@
 package br.com.moodie.enums;
 
 public enum Idioma {
-	PT,
+	PT_BR,
 	EN,
 	ES,
-	FR
+	FR, 
+	JP
 }
