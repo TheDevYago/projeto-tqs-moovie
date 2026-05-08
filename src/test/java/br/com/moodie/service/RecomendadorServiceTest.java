@@ -43,7 +43,7 @@ class RecomendadorServiceTest {
                                           notificadorMock, geradorMock, 
                                           calculadoraReal, filtroReal);
 
-        usuario = new Usuario("U01", "Maria", "maria@zentry.com", "senha123");
+        usuario = new Usuario("Maria", 25);
         usuario.getPerfil().setPesoGenero(Genero.ACAO, 1.0); // Para o filme não ser cortado
 
         filmePadrao = new Filme("F01", "Duro de Matar", 1988, 132, 
