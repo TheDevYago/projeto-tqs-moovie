@@ -8,13 +8,14 @@ import br.com.moodie.model.PerfilCinefilo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@Tag("unitario")
 class FiltroFilmesTest {
 	private FiltroFilmes filtro;
     private PerfilCinefilo perfil;
@@ -88,7 +89,6 @@ class FiltroFilmesTest {
     @Test
     @DisplayName("Deve remover o filme quando ele possuir algum gênero com peso zero no perfil")
     void deve_RemoverFilme_Quando_GeneroTemPesoZero() {
-        // Arrange
         perfil.setPesoGenero(Genero.TERROR, 0.0);
         
         Filme filmeTerror = new Filme("F04", "O Susto", 2026, 120, 
@@ -96,15 +96,12 @@ class FiltroFilmesTest {
         
         List<Filme> catalogo = List.of(filmePadrao, filmeTerror);
 
-        // Act
         List<Filme> resultado = filtro.filtrar(catalogo, perfil);
 
-        // Assert
         assertEquals(1, resultado.size());
         assertFalse(resultado.contains(filmeTerror), "O filme com gênero de peso zero deveria ser removido");
     }
 
-    // Regra de qualidade do Documento
     @Test
     @DisplayName("Deve retornar uma lista vazia e não nula quando o catálogo recebido for vazio")
     void deve_RetornarListaVazia_Quando_CatalogoVazio() {

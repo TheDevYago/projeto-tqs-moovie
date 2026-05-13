@@ -4,13 +4,14 @@ import br.com.moodie.enums.ClassificacaoEtaria;
 import br.com.moodie.enums.Idioma;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-
+@Tag("unitario")
 class FilmeTest {
 	// CT06
     @Test

@@ -10,6 +10,7 @@ import br.com.moodie.util.GeradorAleatorio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-
+@Tag("integracao")
 @ExtendWith(MockitoExtension.class)
 class RecomendadorServiceTest {
     @Mock private CatalogoFilmeAPI catalogoMock;

@@ -6,10 +6,11 @@ import br.com.moodie.exception.PesoInvalidoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@Tag("unitario")
 class PerfilCinefiloTest {
 	private PerfilCinefilo perfil;
 
