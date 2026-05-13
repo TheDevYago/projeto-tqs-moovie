@@ -22,24 +22,24 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RecomendadorServiceTest {
-	// Nossos "Dublês" - Eles fingem ser os sistemas externos
     @Mock private CatalogoFilmeAPI catalogoMock;
     @Mock private HistoricoUsuarioRepository historicoRepoMock;
     @Mock private NotificadorPush notificadorMock;
     @Mock private GeradorAleatorio geradorMock;
 
+    private CalculadoraScore calculadoraSpy;
     private RecomendadorService service;
     private Usuario usuario;
     private Filme filmePadrao;
 
     @BeforeEach
     void setup() {
-        CalculadoraScore calculadoraReal = new CalculadoraScore();
+    	calculadoraSpy = spy(new CalculadoraScore());
         FiltroFilmes filtroReal = new FiltroFilmes();
 
         service = new RecomendadorService(catalogoMock, historicoRepoMock, 
                                           notificadorMock, geradorMock, 
-                                          calculadoraReal, filtroReal);
+                                          calculadoraSpy, filtroReal);
 
         usuario = new Usuario("Maria", 25);
         usuario.getPerfil().setPesoGenero(Genero.ACAO, 1.0); // Para o filme não ser cortado
@@ -52,7 +52,6 @@ class RecomendadorServiceTest {
     @Test
     @DisplayName("Deve salvar a lista de recomendações no repositório de histórico")
     void deve_SalvarNoHistorico_Quando_RecomendarComSucesso() throws Exception {
-        // Ensinando o dublê: "Quando pedirem o catálogo, devolva essa lista com 1 filme"
         when(catalogoMock.buscarTodos()).thenReturn(List.of(filmePadrao));
 
         List<Recomendacao> resultado = service.recomendar(usuario, 5);
@@ -77,16 +76,23 @@ class RecomendadorServiceTest {
     @Test
     @DisplayName("Deve retornar lista vazia e não quebrar se a API do catálogo cair")
     void deve_RetornarListaVazia_Quando_ApiLancarExcecao() throws Exception {
-        
         when(catalogoMock.buscarTodos()).thenThrow(new RuntimeException("API Fora do Ar"));
 
-       
         List<Recomendacao> resultado = service.recomendar(usuario, 5);
-
         
         assertTrue(resultado.isEmpty(), "Deve retornar lista vazia se a API falhar");
-       
         verify(historicoRepoMock, never()).registrarRecomendacao(any(), any());
         verify(notificadorMock, never()).enviar(any());
+    }
+    
+    // CT21
+    @Test
+    @DisplayName("CT21: Deve garantir que o cálculo real foi executado pelo Spy")
+    void deve_ExecutarCalculoReal_Quando_Recomendar() throws Exception {
+        when(catalogoMock.buscarTodos()).thenReturn(List.of(filmePadrao));
+
+        service.recomendar(usuario, 5);
+
+        verify(calculadoraSpy, atLeastOnce()).calcular(any(Filme.class), any());
     }
 }
