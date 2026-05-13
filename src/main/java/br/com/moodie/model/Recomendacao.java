@@ -1,5 +1,7 @@
 package br.com.moodie.model;
-
+/**
+ * Objeto de valor que transporta o resultado de uma recomendação processada.
+ */
 public class Recomendacao {
 	private final Filme filme;
 	private final int score;
@@ -11,13 +13,7 @@ public class Recomendacao {
 		this.justificativa = justificativa;
 	}
 	
-	public Filme getFilme() {
-		return filme;
-	}
-	public int getScore() {
-		return score;
-	}
-	public String getJustificativa() {
-		return justificativa;
-	}
+	public Filme getFilme() {return filme; }
+	public int getScore() {return score; }
+	public String getJustificativa() {return justificativa; }
 }

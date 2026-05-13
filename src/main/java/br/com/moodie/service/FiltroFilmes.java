@@ -26,21 +26,21 @@ public class FiltroFilmes {
 	}
 	
 	private boolean naoFoiAssistido(Filme filme, PerfilCinefilo perfil) {
-		return !perfil.getHistoricoAssistidos().contains(filme.getId()); //true, se n estiver no historico
+		return !perfil.getHistoricoAssistidos().contains(filme.getId());
 	}
 	
 	private boolean faixaEtariaPermitida(Filme filme, PerfilCinefilo perfil) {
 		if (perfil.getClassificacaoMaxima() == null) return true;
-		return filme.getClassificacao().getIdadeMaxima() <= perfil.getClassificacaoMaxima().getIdadeMaxima(); // compara os valores do enum
+		return filme.getClassificacao().getIdadeMaxima() <= perfil.getClassificacaoMaxima().getIdadeMaxima();
 	}
 	
 	private boolean idiomaAceito(Filme filme, PerfilCinefilo perfil) {
 		if (perfil.getIdiomaAceitos().isEmpty()) return true;
-		return perfil.getIdiomaAceitos().contains(filme.getIdioma()); // true, se o idioma esta na lista de aceitos
+		return perfil.getIdiomaAceitos().contains(filme.getIdioma());
 	}
 	
 	private boolean generoPermitido(Filme filme, PerfilCinefilo perfil) {
-		for (Genero genero: filme.getGeneros()) { // exclui o filme q tenha peso exatamento a 0.0
+		for (Genero genero: filme.getGeneros()) {
 			if (perfil.getPesoGenero(genero) == 0.0) {
 				return false;
 			}

@@ -43,8 +43,7 @@ class RecomendadorServiceTest {
                                           calculadoraSpy, filtroReal);
 
         usuario = new Usuario("Maria", 25);
-        usuario.getPerfil().setPesoGenero(Genero.ACAO, 1.0); // Para o filme não ser cortado
-
+        usuario.getPerfil().setPesoGenero(Genero.ACAO, 1.0);
         filmePadrao = new Filme("F01", "Duro de Matar", 1988, 132, 
                 List.of(Genero.ACAO), ClassificacaoEtaria.DOZE, Idioma.EN, 90);
     }

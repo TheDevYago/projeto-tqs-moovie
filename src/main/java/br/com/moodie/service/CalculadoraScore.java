@@ -36,7 +36,7 @@ public class CalculadoraScore {
 			somaPesos += perfil.getPesoGenero(genero);
 		}
 		
-		return (somaPesos / filme.getGeneros().size()) * 100; // media pond. convertida para a escala
+		return (somaPesos / filme.getGeneros().size()) * 100;
 	}
 	
 	private double calcularScoreDuracao(Filme filme, PerfilCinefilo perfil) {
@@ -53,7 +53,7 @@ public class CalculadoraScore {
 	}
 	
 	private double calcularScoreAfinidade(Filme filme, PerfilCinefilo perfil) {
-		boolean temNotaAlta = perfil.getHistoricoAssistidos().stream().map(id -> perfil.getNotaPara(id)).anyMatch(nota -> nota != null && nota >= 4);
+		boolean temNotaAlta = perfil.getHistoricoAssistidos().stream().map(perfil::getNotaPara).anyMatch(nota -> nota != null && nota >= 4);
 		return temNotaAlta ? 100.0 : 0.0;
 	}
 }

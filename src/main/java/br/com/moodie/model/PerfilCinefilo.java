@@ -7,7 +7,9 @@ import br.com.moodie.exception.DuracaoInvalidaException;
 import br.com.moodie.exception.PesoInvalidoException;
 
 import java.util.*;
-
+/**
+ * Armazena as preferências, restrições e histórico de um usuário específico.
+ */
 public class PerfilCinefilo {
 	private final Map<Genero, Double> pesosGeneros = new EnumMap<>(Genero.class);
 	private int duracaoMinima;
@@ -53,27 +55,11 @@ public class PerfilCinefilo {
 		}
 	}
 	
-	// --- Getters
-	public double getPesoGenero(Genero genero) {
-		return pesosGeneros.getOrDefault(genero, 0.0);
-	}
-	public int getDuracaoMinima() {
-		return duracaoMinima;
-	}
-	public int getDuracaoMaxima() {
-		return duracaoMaxima;
-	}
-	public List<Idioma> getIdiomaAceitos() {
-		return Collections.unmodifiableList(idiomasAceitos);
-	}
-	public Set<String> getHistoricoAssistidos() {
-		return Collections.unmodifiableSet(historicoAssistidos);
-	}
-	public Integer getNotaPara(String filmeId) {
-		return notas.get(filmeId); // faz retorno de null se n tem nota
-	}
-	
-	public ClassificacaoEtaria getClassificacaoMaxima() {
-	    return classificacaoMaxima;
-	}
+	public double getPesoGenero(Genero genero) {return pesosGeneros.getOrDefault(genero, 0.0); }
+	public int getDuracaoMinima() {return duracaoMinima; }
+	public int getDuracaoMaxima() {return duracaoMaxima; }
+	public ClassificacaoEtaria getClassificacaoMaxima() {return classificacaoMaxima; }
+	public List<Idioma> getIdiomaAceitos() {return Collections.unmodifiableList(idiomasAceitos); }
+	public Set<String> getHistoricoAssistidos() {return Collections.unmodifiableSet(historicoAssistidos); }
+	public Integer getNotaPara(String filmeId) {return notas.get(filmeId); }
 }
