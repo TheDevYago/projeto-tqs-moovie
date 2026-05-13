@@ -16,7 +16,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Test;
 
 class CalculadoraScoreTest {
 	private CalculadoraScore calculadora;

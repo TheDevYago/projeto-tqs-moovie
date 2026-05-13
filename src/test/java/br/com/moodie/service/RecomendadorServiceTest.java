@@ -4,7 +4,6 @@ import br.com.moodie.enums.ClassificacaoEtaria;
 import br.com.moodie.enums.Genero;
 import br.com.moodie.enums.Idioma;
 import br.com.moodie.model.Filme;
-import br.com.moodie.model.PerfilCinefilo;
 import br.com.moodie.model.Recomendacao;
 import br.com.moodie.model.Usuario;
 import br.com.moodie.util.GeradorAleatorio;
@@ -20,7 +19,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.junit.jupiter.api.Test;
 
 @ExtendWith(MockitoExtension.class)
 class RecomendadorServiceTest {
