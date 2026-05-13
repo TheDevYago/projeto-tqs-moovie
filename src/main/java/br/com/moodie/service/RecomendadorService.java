@@ -8,7 +8,9 @@ import br.com.moodie.util.GeradorAleatorio;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
+/**
+ * Serviço mestre de recomendação que orquestra a busca, filtragem e classificação de filmes.
+ */
 public class RecomendadorService {
 	private final CatalogoFilmeAPI catalogo;
 	private final HistoricoUsuarioRepository historicoRepositorio;
@@ -25,7 +27,12 @@ public class RecomendadorService {
 		this.calculadora = calculadora;
 		this.filtro = filtro;
 	}
-	
+	/**
+	 * Gera uma lista ordenada das melhores recomendações para o usuário.
+	 * @param usuario
+	 * @param topN
+	 * @return
+	 */
 	public List<Recomendacao> recomendar(Usuario usuario, int topN) {
 		List<Filme> filmesDisponiveis;
 		try {
@@ -33,13 +40,10 @@ public class RecomendadorService {
 		} catch (Exception e) {
 			return Collections.emptyList(); //se a api falha, n derruba o sistema
 		}
-		
 		List<Filme> filmesFiltrados = filtro.filtrar(filmesDisponiveis, usuario.getPerfil());
-		
 		if(filmesFiltrados.isEmpty()) {
 			return Collections.emptyList();
 		}
-		
 		List<Recomendacao> recomendacoes = filmesFiltrados.stream().map(filme -> {
 			int score = calculadora.calcular(filme, usuario.getPerfil());
 			String justificada = "Recomendado com base nas suas preferencias!";
@@ -47,26 +51,26 @@ public class RecomendadorService {
 		}).sorted((r1, r2) -> {
 			int cmpScore = Integer.compare(r2.getScore(), r1.getScore());
 			if(cmpScore != 0) return cmpScore;
-			
 			int cmpPop = Integer.compare(r2.getFilme().getPopularidade(), r1.getFilme().getPopularidade());
 			if (cmpPop !=0) return cmpPop;
-			
 			return gerador.sortearInteiro(-1, 1);
 		})
 		.limit(topN).collect(Collectors.toList());
-		
 		historicoRepositorio.registrarRecomendacao(usuario, recomendacoes);
-		
 		if (usuario.isNotificacoesAtivas()) {
 			try {
 				notificador.enviar(usuario);
-			} catch (Exception e) {
+			} catch (Exception e) {	
 				
 			}
 		}
 		return recomendacoes;
 	}
-	
+	/**
+	 * Modo "Surpreenda-me": Sorteia um único filme aleatório que atenda aos filtros do usuário.
+	 * @param usuario
+	 * @return
+	 */
 	public Recomendacao recomendarAleatorio(Usuario usuario) {
 		List <Filme> filmesDisponiveis;
 		try {

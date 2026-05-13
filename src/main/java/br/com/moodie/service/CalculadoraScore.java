@@ -3,13 +3,20 @@ package br.com.moodie.service;
 import br.com.moodie.enums.Genero;
 import br.com.moodie.model.Filme;
 import br.com.moodie.model.PerfilCinefilo;
-
+/**
+ * Componente responsável pelo cálculo do score de afinidade de um filme para um perfil específico.
+ */
 public class CalculadoraScore {
 	private static final double PESO_GENERO = 0.50;
 	private static final double PESO_DURACAO = 0.20;
 	private static final double PESO_POPULARIDADE = 0.15;
 	private static final double PESO_AFINIDADE = 0.15;
-	
+	/**
+	 * Calcula a pontuação final de um filme (0 a 100) para o perfil fornecido.
+	 * @param filme
+	 * @param perfil
+	 * @return
+	 */
 	public int calcular (Filme filme, PerfilCinefilo perfil) {
 		double scoreGenero = calcularScoreGenero(filme, perfil);
 		double scoreDuracao = calcularScoreDuracao(filme, perfil);
@@ -17,7 +24,6 @@ public class CalculadoraScore {
 		double scoreAfinidade = calcularScoreAfinidade(filme, perfil);
 		double pontuacaoFinal = (scoreGenero * PESO_GENERO) + (scoreDuracao * PESO_DURACAO) + (scorePopularidade * PESO_POPULARIDADE) + (scoreAfinidade * PESO_AFINIDADE);
 		
-		//para q o score nunca passe de 100 e nunca fique negativo
 		int scoreArredondado = (int) Math.round(pontuacaoFinal);
 		return Math.max(0, Math.min(100, scoreArredondado));
 	}
@@ -39,10 +45,9 @@ public class CalculadoraScore {
 		int maximo = perfil.getDuracaoMaxima();
 		
 		if (duracao >= minimo && duracao <= maximo) {
-			return 100.0; // ta na faixa perfeita
+			return 100.0;
 		}
 		
-		// se ta fora, reduz 1 ponto para cada min fora da faixa
 		int diferenca = (duracao < minimo) ? (minimo - duracao) : (duracao - maximo);
 		return Math.max(0.0, 100.0 - diferenca);
 	}

@@ -7,8 +7,16 @@ import br.com.moodie.model.PerfilCinefilo;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
+/**
+ * Componente responsável pela filtragem preliminar do catálogo de filmes.
+ */
 public class FiltroFilmes {
+	/**
+	 * Filtra uma lista de filmes com base nas restrições definidas no perfil do usuário.
+	 * @param catalogo
+	 * @param perfil
+	 * @return
+	 */
 	public List<Filme> filtrar(List<Filme> catalogo, PerfilCinefilo perfil) {
 		if (catalogo == null || catalogo.isEmpty()) {
 			return Collections.emptyList();
