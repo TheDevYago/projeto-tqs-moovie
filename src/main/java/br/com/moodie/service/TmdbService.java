@@ -32,59 +32,52 @@ public class TmdbService implements CatalogoFilmeAPI {
 
     @Override
     public List<Filme> buscarTodos() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL))
-                .GET()
-                .build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() != 200) {
-            return Collections.emptyList();
-        }
-
-        JsonObject jsonObject = gson.fromJson(response.body(), JsonObject.class);
-        JsonArray resultados = jsonObject.getAsJsonArray("results");
-        List<Filme> filmesEncontrados = new ArrayList<>();
-
-        for (JsonElement elemento : resultados) {
-            JsonObject filmeJson = elemento.getAsJsonObject();
-
-            String id = filmeJson.get("id").getAsString();
-            String titulo = filmeJson.get("title").getAsString();
-            
-            String dataLancamento = filmeJson.has("release_date") && !filmeJson.get("release_date").getAsString().isEmpty() 
-            		? filmeJson.get("release_date").getAsString() : "2024";
-            int ano = dataLancamento.length() >= 4 ? Integer.parseInt(dataLancamento.substring(0, 4)) : 2024;
-            
-            // Usamos getAsDouble com cast para evitar erros de parse do Gson com números decimais
-            int popularidade = (int) filmeJson.get("popularity").getAsDouble();
-
-            // --- O MAPEAMENTO DE GÊNEROS (A PEÇA QUE FALTAVA) ---
-            List<Genero> generosDoFilme = new ArrayList<>();
-            if (filmeJson.has("genre_ids")) {
-                JsonArray genreIds = filmeJson.getAsJsonArray("genre_ids");
-                for (JsonElement idElement : genreIds) {
-                    int genreId = idElement.getAsInt();
-                    switch (genreId) {
-                        case 28: generosDoFilme.add(Genero.ACAO); break;
-                        case 35: generosDoFilme.add(Genero.COMEDIA); break;
-                        case 18: generosDoFilme.add(Genero.DRAMA); break;
-                        case 878: generosDoFilme.add(Genero.FICCAO_CIENTIFICA); break;
-                        case 10749: generosDoFilme.add(Genero.ROMANCE); break;
-                        case 27: generosDoFilme.add(Genero.TERROR); break;
-                        case 99: generosDoFilme.add(Genero.DOCUMENTARIO); break;
-                    }
+    	List<Filme> todosOsFilmes = new ArrayList<>();
+    	
+    	for(int pagina = 1; pagina<= 5; pagina++) {
+    		String urlComPagina = BASE_URL + "&page=" + pagina;
+    		
+    		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(urlComPagina)).GET().build();
+    		HttpResponse <String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    		
+    		if (response.statusCode() != 200) continue;
+    		
+    		JsonObject jsonObject = gson.fromJson(response.body(), JsonObject.class);
+    		JsonArray resultados = jsonObject.getAsJsonArray("results");
+    		
+    		for (JsonElement elemento : resultados) {
+    			JsonObject filmeJson = elemento.getAsJsonObject();
+    			
+    			String id = filmeJson.get("id").getAsString();
+                String titulo = filmeJson.get("title").getAsString();
+                String dataLancamento = filmeJson.has("release_date") && !filmeJson.get("release_date").getAsString().isEmpty() 
+                        ? filmeJson.get("release_date").getAsString() : "2024";
+                int ano = dataLancamento.length() >= 4 ? Integer.parseInt(dataLancamento.substring(0, 4)) : 2024;
+                int popularidade = (int) filmeJson.get("popularity").getAsDouble();
+                
+                List<Genero> generoDoFilme = new ArrayList<>();
+                if (filmeJson.has("genre_ids") ) {
+                	JsonArray genreIds = filmeJson.getAsJsonArray("genre_ids");
+					for(JsonElement idElement : genreIds) {
+                		int generoID = idElement.getAsInt();
+                		switch (generoID) {
+                        	case 28: generoDoFilme.add(Genero.ACAO); break;
+                        	case 35: generoDoFilme.add(Genero.COMEDIA); break;
+                        	case 18: generoDoFilme.add(Genero.DRAMA); break;
+                        	case 878: generoDoFilme.add(Genero.FICCAO_CIENTIFICA); break;
+                        	case 10749: generoDoFilme.add(Genero.ROMANCE); break;
+                        	case 27: generoDoFilme.add(Genero.TERROR); break;
+                        	case 99: generoDoFilme.add(Genero.DOCUMENTARIO); break;
+                		}
+                	}
                 }
-            }
-
-            // Simula uma duração variando entre 90 e 150 min
-            int duracaoSimulada = 90 + (popularidade % 60);
-
-            Filme filme = new Filme(id, titulo, ano, duracaoSimulada, generosDoFilme, ClassificacaoEtaria.LIVRE, Idioma.PT_BR, popularidade);
-            filmesEncontrados.add(filme);
-        }
-
-        return filmesEncontrados;
+                int duracaoSimulada = 90 + (popularidade % 60);
+                
+                Filme filme = new Filme(id, titulo, ano, duracaoSimulada, generoDoFilme, ClassificacaoEtaria.LIVRE, Idioma.PT_BR, popularidade);
+                todosOsFilmes.add(filme);
+    		}
+    	}
+    	System.out.println("✅ Catálogo carregado com " + todosOsFilmes.size() + " filmes da TMDB.");
+    	return todosOsFilmes;
     }
 }
