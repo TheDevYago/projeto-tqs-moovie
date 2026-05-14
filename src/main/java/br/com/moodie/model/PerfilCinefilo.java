@@ -62,4 +62,6 @@ public class PerfilCinefilo {
 	public List<Idioma> getIdiomaAceitos() {return Collections.unmodifiableList(idiomasAceitos); }
 	public Set<String> getHistoricoAssistidos() {return Collections.unmodifiableSet(historicoAssistidos); }
 	public Integer getNotaPara(String filmeId) {return notas.get(filmeId); }
+
+	
 }

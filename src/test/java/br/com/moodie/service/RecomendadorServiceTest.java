@@ -4,6 +4,7 @@ import br.com.moodie.enums.ClassificacaoEtaria;
 import br.com.moodie.enums.Genero;
 import br.com.moodie.enums.Idioma;
 import br.com.moodie.model.Filme;
+import br.com.moodie.model.PerfilCinefilo;
 import br.com.moodie.model.Recomendacao;
 import br.com.moodie.model.Usuario;
 import br.com.moodie.util.GeradorAleatorio;
@@ -17,7 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -156,6 +159,23 @@ class RecomendadorServiceTest {
         List<Recomendacao> resultado = service.recomendar(usuario, 5);
 
         assertTrue(resultado.isEmpty());
+    }
+    
+    @Test
+    @DisplayName("Deve retornar um filme aleatório presente no conjunto filtrado (Modo Surpreenda-me)")
+    void deve_RetornarFilmeAleatorio_NoModoSurpreendaMe() throws Exception {
+        when(catalogoMock.buscarTodos()).thenReturn(List.of(filmePadrao));
+        
+        when(geradorMock.sortearInteiro(eq(0), anyInt())).thenReturn(0);
+
+        Optional<Recomendacao> resultadoOpt = service.recomendarAleatorio(usuario);
+
+        assertAll("Validação do Modo Surpreenda-me",
+            () -> assertTrue(resultadoOpt.isPresent(), "A recomendação deveria estar presente"),
+            () -> assertEquals(filmePadrao.getId(), resultadoOpt.get().getFilme().getId(), "O filme sorteado deve ser o esperado"),
+            () -> assertEquals("Modo Surpreenda-me", resultadoOpt.get().getJustificativa()),
+            () -> verify(historicoRepoMock, times(1)).registrarRecomendacao(eq(usuario), anyList())
+        );
     }
 
 }
