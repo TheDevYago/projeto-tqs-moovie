@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.AfterEach;
+import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -46,6 +48,17 @@ class RecomendadorServiceTest {
         usuario.getPerfil().setPesoGenero(Genero.ACAO, 1.0);
         filmePadrao = new Filme("F01", "Duro de Matar", 1988, 132, 
                 List.of(Genero.ACAO), ClassificacaoEtaria.DOZE, Idioma.EN, 90);
+    }
+    
+    @AfterEach
+    void tearDown() {
+    	if (usuario != null) {
+            usuario.getPerfil().getHistoricoAssistidos().clear();
+        }
+
+        if (calculadoraSpy != null) {
+            Mockito.reset(calculadoraSpy);
+        }
     }
 
     // CT17:
