@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +36,7 @@ class RecomendadorServiceTest {
     private RecomendadorService service;
     private Usuario usuario;
     private Filme filmePadrao;
+    private PerfilCinefilo perfil;
 
     @BeforeEach
     void setup() {
@@ -177,5 +177,4 @@ class RecomendadorServiceTest {
             () -> verify(historicoRepoMock, times(1)).registrarRecomendacao(eq(usuario), anyList())
         );
     }
-
 }

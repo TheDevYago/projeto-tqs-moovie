@@ -4,6 +4,7 @@ import br.com.moodie.enums.ClassificacaoEtaria;
 import br.com.moodie.enums.Genero;
 import br.com.moodie.enums.Idioma;
 import br.com.moodie.exception.DuracaoInvalidaException;
+import br.com.moodie.exception.PerfilIncompletoException;
 import br.com.moodie.exception.PesoInvalidoException;
 
 import java.util.*;
@@ -53,6 +54,12 @@ public class PerfilCinefilo {
 		if (!idiomasAceitos.contains(idioma)) {
 			idiomasAceitos.add(idioma);
 		}
+	}
+	
+	public void validarParaRecomendacao() {
+	    if (pesosGeneros.isEmpty()) {
+	        throw new PerfilIncompletoException("O perfil precisa de pelo menos um gênero definido.");
+	    }
 	}
 	
 	public double getPesoGenero(Genero genero) {return pesosGeneros.getOrDefault(genero, 0.0); }

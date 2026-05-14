@@ -2,6 +2,7 @@ package br.com.moodie.model;
 
 import br.com.moodie.enums.Genero;
 import br.com.moodie.exception.DuracaoInvalidaException;
+import br.com.moodie.exception.PerfilIncompletoException;
 import br.com.moodie.exception.PesoInvalidoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.Tag;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -104,6 +104,16 @@ class PerfilCinefiloTest {
         } else {
             assertThrows(PesoInvalidoException.class, () -> perfil.setPesoGenero(Genero.ACAO, peso));
         }
+    }
+    
+    @Test
+    @DisplayName("Deve lançar PerfilIncompletoException quando tentar recomendar sem gêneros definidos")
+    void deve_LancarExcecao_Quando_PerfilNaoTemGeneros() {
+        PerfilCinefilo perfilVazio = new PerfilCinefilo();
+        
+        assertThrows(PerfilIncompletoException.class, () -> {
+            perfilVazio.validarParaRecomendacao(); 
+        });
     }
     
 }

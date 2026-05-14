@@ -81,8 +81,14 @@
             			<goals>
                 			<goal>report</goal>
            				</goals>
+           				<configuration>
+			                <excludes>
+			                    <exclude>br/com/moodie/Main.*</exclude>
+			                    <exclude>br/com/moodie/service/TmdbService.*</exclude>
+			                </excludes>
+			            </configuration>
         			</execution>
-    			</executions>
+        		</executions>
 			</plugin>
 		</plugins>
 	</build>
