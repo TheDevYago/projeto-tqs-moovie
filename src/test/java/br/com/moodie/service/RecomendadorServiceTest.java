@@ -118,4 +118,44 @@ class RecomendadorServiceTest {
 
         verify(notificadorMock, never()).enviar(any());
     }
+    
+    @Test
+    @DisplayName("Deve respeitar o tamanho N e ordenar por score decrescente")
+    void deve_OrdenarPorScore_ERespeitarLimite() throws Exception {
+        Filme ruim = new Filme("1", "Ruim", 2024, 120, List.of(Genero.DRAMA), ClassificacaoEtaria.LIVRE, Idioma.PT_BR, 10);
+        Filme bom = filmePadrao;
+        
+        when(catalogoMock.buscarTodos()).thenReturn(List.of(ruim, bom));
+
+        List<Recomendacao> resultado = service.recomendar(usuario, 1);
+
+        assertAll(
+            () -> assertEquals(1, resultado.size(), "Deve respeitar o limite N=1"),
+            () -> assertEquals("F01", resultado.get(0).getFilme().getId(), "O melhor filme deve vir primeiro")
+        );
+    }
+    
+    @Test
+    @DisplayName("Deve usar popularidade como critério de desempate para scores iguais")
+    void deve_DesempatarPorPopularidade() throws Exception {
+        Filme popular = new Filme("P", "Popular", 2024, 120, List.of(Genero.ACAO), ClassificacaoEtaria.LIVRE, Idioma.PT_BR, 500);
+        Filme comum = new Filme("C", "Comum", 2024, 120, List.of(Genero.ACAO), ClassificacaoEtaria.LIVRE, Idioma.PT_BR, 50);
+        
+        when(catalogoMock.buscarTodos()).thenReturn(List.of(comum, popular));
+
+        List<Recomendacao> resultado = service.recomendar(usuario, 10);
+
+        assertEquals("P", resultado.get(0).getFilme().getId(), "O filme mais popular deve vencer o empate de score");
+    }
+    
+    @Test
+    @DisplayName("Deve retornar recomendação vazia quando o catálogo da API for vazio")
+    void deve_RetornarVazio_Quando_CatalogoForVazio() throws Exception {
+        when(catalogoMock.buscarTodos()).thenReturn(List.of());
+
+        List<Recomendacao> resultado = service.recomendar(usuario, 5);
+
+        assertTrue(resultado.isEmpty());
+    }
+
 }
