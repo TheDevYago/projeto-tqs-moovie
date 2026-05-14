@@ -102,6 +102,7 @@ class FiltroFilmesTest {
         assertFalse(resultado.contains(filmeTerror), "O filme com gênero de peso zero deveria ser removido");
     }
 
+    // CT16
     @Test
     @DisplayName("Deve retornar uma lista vazia e não nula quando o catálogo recebido for vazio")
     void deve_RetornarListaVazia_Quando_CatalogoVazio() {

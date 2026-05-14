@@ -48,7 +48,7 @@ class RecomendadorServiceTest {
                 List.of(Genero.ACAO), ClassificacaoEtaria.DOZE, Idioma.EN, 90);
     }
 
-    // CT19:
+    // CT17:
     @Test
     @DisplayName("Deve salvar a lista de recomendações no repositório de histórico")
     void deve_SalvarNoHistorico_Quando_RecomendarComSucesso() throws Exception {
@@ -60,7 +60,7 @@ class RecomendadorServiceTest {
         verify(historicoRepoMock, times(1)).registrarRecomendacao(eq(usuario), anyList());
     }
 
-    // CT20:
+    // CT18:
     @Test
     @DisplayName("Deve enviar notificação push apenas se o usuário estiver com notificações ativas")
     void deve_EnviarNotificacao_Quando_UsuarioTemNotificacaoAtiva() throws Exception {
@@ -72,7 +72,7 @@ class RecomendadorServiceTest {
         verify(notificadorMock, times(1)).enviar(usuario);
     }
     
-    // CT17 
+    // CT19
     @Test
     @DisplayName("Deve retornar lista vazia e não quebrar se a API do catálogo cair")
     void deve_RetornarListaVazia_Quando_ApiLancarExcecao() throws Exception {
@@ -85,14 +85,26 @@ class RecomendadorServiceTest {
         verify(notificadorMock, never()).enviar(any());
     }
     
-    // CT21
+    // CT20
     @Test
-    @DisplayName("CT21: Deve garantir que o cálculo real foi executado pelo Spy")
+    @DisplayName("Deve garantir que o cálculo real foi executado pelo Spy")
     void deve_ExecutarCalculoReal_Quando_Recomendar() throws Exception {
         when(catalogoMock.buscarTodos()).thenReturn(List.of(filmePadrao));
 
         service.recomendar(usuario, 5);
 
         verify(calculadoraSpy, atLeastOnce()).calcular(any(Filme.class), any());
+    }
+    
+    // CT21
+    @Test
+    @DisplayName("Deve ignorar notificação se o usuário desativou o recurso")
+    void deve_NaoEnviarNotificacao_Quando_UsuarioTemNotificacaoInativa() throws Exception {
+        when(catalogoMock.buscarTodos()).thenReturn(List.of(filmePadrao));
+        usuario.setNotificacoesAtivas(false);
+
+        service.recomendar(usuario, 5);
+
+        verify(notificadorMock, never()).enviar(any());
     }
 }

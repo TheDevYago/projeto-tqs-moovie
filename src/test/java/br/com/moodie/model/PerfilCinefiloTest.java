@@ -6,6 +6,8 @@ import br.com.moodie.exception.PesoInvalidoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.Tag;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,5 +67,41 @@ class PerfilCinefiloTest {
         assertThrows(IllegalArgumentException.class, () -> {
             perfil.adicionarNota("F02", 0);
         });
+    }
+    
+    // CT06
+    @Test
+    @DisplayName("Deve criar perfil com sucesso e estado inicial limpo")
+    void deve_CriarPerfilComSucesso() {
+        assertNotNull(perfil.getIdiomaAceitos());
+        assertTrue(perfil.getHistoricoAssistidos().isEmpty());
+    }
+
+    // CT07
+    @Test
+    @DisplayName("Deve permitir a atualização de pesos existentes")
+    void deve_AtualizarPerfilComNovosPesos() throws PesoInvalidoException {
+        perfil.setPesoGenero(Genero.DRAMA, 0.5);
+        perfil.setPesoGenero(Genero.DRAMA, 0.9);
+        
+        assertEquals(0.9, perfil.getPesoGenero(Genero.DRAMA));
+    }
+
+    // CT08
+    @ParameterizedTest
+    @CsvSource({
+        "0.1, true",
+        "0.5, true",
+        "1.0, true",
+        "1.1, false",
+        "-0.1, false"
+    })
+    @DisplayName("Validar múltiplos limites de peso via CSV")
+    void deve_ValidarPesosParametrizados(double peso, boolean valido) {
+        if (valido) {
+            assertDoesNotThrow(() -> perfil.setPesoGenero(Genero.ACAO, peso));
+        } else {
+            assertThrows(PesoInvalidoException.class, () -> perfil.setPesoGenero(Genero.ACAO, peso));
+        }
     }
 }

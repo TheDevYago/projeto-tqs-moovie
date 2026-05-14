@@ -29,6 +29,7 @@ class CalculadoraScoreTest {
 		perfil.setFaixaDuracao(90, 150);
 	}
 	
+    // CT10
 	@Test
 	@DisplayName("Score de genero deve ser 100 quando todos os generos do filme tem peso 1.0 no perfil")
 	void deve_RetornarScoreMaximoDeGenero_Quando_FilmeTemApenasGenerosAmados() {
@@ -42,6 +43,7 @@ class CalculadoraScoreTest {
 		assertEquals(70, score);
 	}
 	
+    // CT11
 	@ParameterizedTest
 	@CsvSource({"120, 70", "160, 68", "80, 68", "250, 50"})
 	@DisplayName("Deve reduzir o score de duracao proporcionalmente quando fora da faixa")

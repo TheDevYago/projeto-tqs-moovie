@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @Tag("unitario")
 class FilmeTest {
-	// CT06
+	// CT09
     @Test
     @DisplayName("Deve considerar filmes iguais quando possuem o mesmo ID")
     void deve_ConsiderarIguais_Quando_FilmesTemMesmoId() {
