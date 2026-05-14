@@ -22,7 +22,7 @@ public class FiltroFilmes {
 			return Collections.emptyList();
 		}
 		
-		return catalogo.stream().filter(filme -> naoFoiAssistido(filme, perfil)).filter(filme -> faixaEtariaPermitida(filme, perfil)).filter(filme -> idiomaAceito(filme, perfil)).filter(filme -> generoPermitido(filme, perfil)).collect(Collectors.toList());
+		return catalogo.stream().filter(filme -> naoFoiAssistido(filme, perfil)).filter(filme -> faixaEtariaPermitida(filme, perfil)).filter(filme -> idiomaAceito(filme, perfil)).filter(filme -> generoExatoPermitido(filme, perfil)).filter(filme -> duracaoPermitida(filme, perfil)).collect(Collectors.toList());
 	}
 	
 	private boolean naoFoiAssistido(Filme filme, PerfilCinefilo perfil) {
@@ -39,12 +39,18 @@ public class FiltroFilmes {
 		return perfil.getIdiomaAceitos().contains(filme.getIdioma());
 	}
 	
-	private boolean generoPermitido(Filme filme, PerfilCinefilo perfil) {
+	private boolean generoExatoPermitido(Filme filme, PerfilCinefilo perfil) {
+		if (filme.getGeneros().isEmpty()) return false;
 		for (Genero genero: filme.getGeneros()) {
-			if (perfil.getPesoGenero(genero) == 0.0) {
-				return false;
+			if (perfil.getPesoGenero(genero) == 1.0) {
+				return true;
 			}
 		}
-		return true;
+		return false;
+	}
+	
+	private boolean duracaoPermitida (Filme filme, PerfilCinefilo perfil) {
+		if (perfil.getDuracaoMaxima() == 0) return true;
+		return filme.getDuracaoMinutos() <= perfil.getDuracaoMaxima();
 	}
 }
