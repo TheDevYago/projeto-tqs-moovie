@@ -1,15 +1,18 @@
 package br.com.moodie.model;
 
 import br.com.moodie.enums.ClassificacaoEtaria;
+import br.com.moodie.enums.Genero;
 import br.com.moodie.enums.Idioma;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Tag("unitario")
 class FilmeTest {
@@ -29,5 +32,23 @@ class FilmeTest {
 
         assertEquals(filme1, filme2, "Filmes com o mesmo ID devem ser considerados iguais");
         assertNotEquals(filme1, filmeDiferente, "Filmes com IDs diferentes não devem ser iguais");
+    }
+    
+    @Test
+    @DisplayName("Deve garantir que todos os atributos do filme foram preenchidos corretamente no construtor")
+    void deve_ManterIntegridadeDosDados_AoCriarFilme() {
+        Filme filme = new Filme("F1", "Avatar", 2009, 162, 
+                                List.of(Genero.ACAO, Genero.FICCAO_CIENTIFICA), 
+                                ClassificacaoEtaria.DOZE, Idioma.PT_BR, 100);
+        assertAll("Validação de atributos do Filme",
+            () -> assertEquals("F1", filme.getId()),
+            () -> assertEquals("Avatar", filme.getTitulo()),
+            () -> assertEquals(2009, filme.getAno()),
+            () -> assertEquals(162, filme.getDuracaoMinutos()),
+            () -> assertEquals(2, filme.getGeneros().size()),
+            () -> assertEquals(ClassificacaoEtaria.DOZE, filme.getClassificacao()),
+            () -> assertEquals(Idioma.PT_BR, filme.getIdioma()),
+            () -> assertEquals(100, filme.getPopularidade())
+        );
     }
 }

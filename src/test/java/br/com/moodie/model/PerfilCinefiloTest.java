@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -104,4 +105,5 @@ class PerfilCinefiloTest {
             assertThrows(PesoInvalidoException.class, () -> perfil.setPesoGenero(Genero.ACAO, peso));
         }
     }
+    
 }

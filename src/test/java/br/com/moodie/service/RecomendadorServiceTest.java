@@ -52,9 +52,7 @@ class RecomendadorServiceTest {
     
     @AfterEach
     void tearDown() {
-    	if (usuario != null) {
-            usuario.getPerfil().getHistoricoAssistidos().clear();
-        }
+    	usuario = null;
 
         if (calculadoraSpy != null) {
             Mockito.reset(calculadoraSpy);
