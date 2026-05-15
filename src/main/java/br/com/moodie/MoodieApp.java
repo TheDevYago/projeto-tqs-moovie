@@ -4,21 +4,17 @@ import br.com.moodie.enums.*;
 import br.com.moodie.model.*;
 import br.com.moodie.service.*;
 import br.com.moodie.util.GeradorAleatorio;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class MoodieApp {
 
     public static void main(String[] args) {
         Scanner leitor = new Scanner(System.in);
-        imprimirHeader();
-
-        // 1. Setup (Injeção de Dependência)
+        
+        // 1. Setup Interno do Sistema
         CatalogoFilmeAPI catalogo = new CatalogoMock();
         CalculadoraScore calculadora = new CalculadoraScore();
         FiltroFilmes filtro = new FiltroFilmes();
-        
-        // Lambdas para as interfaces de infra
         HistoricoUsuarioRepository repo = (u, recs) -> {}; 
         NotificadorPush notificador = (u) -> {}; 
         GeradorAleatorio gerador = (min, max) -> (int) (Math.random() * (max - min + 1) + min);
@@ -27,77 +23,83 @@ public class MoodieApp {
             catalogo, repo, notificador, gerador, calculadora, filtro
         );
 
-        // 2. Entrada de Dados
-        System.out.print("Nome do cinéfilo: ");
+        System.out.println("==================================================");
+        System.out.println("          BEM-VINDO AO MOODIE SELECTOR            ");
+        System.out.println("==================================================\n");
+
+        // 2. Cadastro do Usuário
+        System.out.print("Digite seu nome: ");
         String nome = leitor.nextLine();
-        Usuario usuario = new Usuario(nome, 21);
+        System.out.print("Digite sua idade: ");
+        int idade = Integer.parseInt(leitor.nextLine());
+
+        Usuario usuario = new Usuario(nome, idade);
         PerfilCinefilo perfil = usuario.getPerfil();
 
-        System.out.println("\n--- O QUE VOCÊ QUER ASSISTIR HOJE? ---");
-        System.out.println("Gêneros disponíveis: ACAO, DRAMA, FICCAO_CIENTIFICA, TERROR, COMEDIA");
-        System.out.print("Sua preferência nº1: ");
-        try {
-            Genero g = Genero.valueOf(leitor.nextLine().toUpperCase());
-            perfil.setPesoGenero(g, 1.0);
-        } catch (Exception e) {
-            perfil.setPesoGenero(Genero.ACAO, 1.0); // Fallback
+        // 3. Definição de Pesos de Gênero (Dinâmico)
+        System.out.println("\n--- CONFIGURAÇÃO DE PREFERÊNCIAS ---");
+        System.out.println("Para cada gênero, dê uma nota de 0.0 (odeio) a 1.0 (amo):");
+        
+        for (Genero g : Genero.values()) {
+            System.out.print(" > " + g + ": ");
+            try {
+                double peso = Double.parseDouble(leitor.nextLine());
+                perfil.setPesoGenero(g, peso);
+            } catch (Exception e) {
+                System.out.println("   [Aviso] Valor inválido. Definindo como 0.0");
+                perfil.setPesoGenero(g, 0.0);
+            }
         }
 
-        System.out.print("Duração máxima desejada (min): ");
-        int duracaoMax = Integer.parseInt(leitor.nextLine());
-        perfil.setFaixaDuracao(60, duracaoMax);
+        // 4. Definição de Tempo e Restrições
+        System.out.println("\n--- RESTRIÇÕES DE FILME ---");
+        System.out.print("Tempo MÍNIMO que você tem (min): ");
+        int tMin = Integer.parseInt(leitor.nextLine());
+        System.out.print("Tempo MÁXIMO que você tem (min): ");
+        int tMax = Integer.parseInt(leitor.nextLine());
+        perfil.setFaixaDuracao(tMin, tMax);
 
-        // Configurações padrão para garantir que os filmes do Mock passem
-        perfil.adicionarIdioma(Idioma.PT_BR);
-        perfil.adicionarIdioma(Idioma.EN);
-        perfil.setClassificacaoMaxima(ClassificacaoEtaria.DEZOITO);
-
-        // 3. O "Pulo do Gato": Garantir 3 Opções
-        System.out.println("\n🔍 Gerando seu TOP 3 personalizado...");
-
+        System.out.println("Qual classificação máxima você aceita?");
+        System.out.println("Opções: LIVRE, DEZ, DOZE, QUATORZE, DEZESSEIS, DEZOITO");
         try {
-            // Chamada oficial pedindo 3
-            List<Recomendacao> resultado = moodie.recomendar(usuario, 3);
-
-            if (resultado.size() < 3) {
-                System.out.println("⚠️ Seus filtros foram muito restritos! Mostrando o que temos disponível:");
-            }
-
-            System.out.println("\n==================================================");
-            System.out.println("             🍿 SUAS 3 RECOMENDAÇÕES             ");
-            System.out.println("==================================================");
-
-            for (int i = 0; i < resultado.size(); i++) {
-                imprimirCard(resultado.get(i), i + 1);
-            }
-
-            // Se o catálogo for pequeno e não tiver 3, avisamos
-            if (resultado.size() < 3) {
-                System.out.println("\n💡 Dica: Adicione mais filmes ao CatalogoMock para ver mais opções!");
-            }
-
+            String classifStr = leitor.nextLine().toUpperCase();
+            perfil.setClassificacaoMaxima(ClassificacaoEtaria.valueOf(classifStr));
         } catch (Exception e) {
-            System.err.println("💥 Erro técnico: " + e.getMessage());
+            perfil.setClassificacaoMaxima(ClassificacaoEtaria.DEZOITO);
+        }
+
+        System.out.println("Quais idiomas você aceita? (Separe por vírgula. Ex: PT_BR, EN)");
+        String[] ids = leitor.nextLine().toUpperCase().split(",");
+        for (String id : ids) {
+            try {
+                perfil.adicionarIdioma(Idioma.valueOf(id.trim()));
+            } catch (Exception e) { /* ignora idiomas inválidos */ }
+        }
+
+        // 5. O Resultado: Sorteio de Filmes
+        System.out.println("\n🔍 CRUZANDO DADOS E GERANDO RECOMENDAÇÕES...");
+        
+        try {
+            List<Recomendacao> recomendacoes = moodie.recomendar(usuario, 3);
+
+            if (recomendacoes.isEmpty()) {
+                System.out.println("❌ Poxa, nenhum filme do catálogo bate com todos os seus filtros atuais.");
+            } else {
+                System.out.println("\n⭐ TOP " + recomendacoes.size() + " FILMES PARA VOCÊ AGORA:");
+                System.out.println("--------------------------------------------------");
+                for (int i = 0; i < recomendacoes.size(); i++) {
+                    Recomendacao rec = recomendacoes.get(i);
+                    Filme f = rec.getFilme();
+                    System.out.printf("%dº | %s (%d)\n", (i+1), f.getTitulo(), f.getAno());
+                    System.out.printf("   Score: %d pts | Gênero: %s | %d min\n", 
+                                      rec.getScore(), f.getGeneros().get(0), f.getDuracaoMinutos());
+                    System.out.println("--------------------------------------------------");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("💥 Erro ao processar: " + e.getMessage());
         } finally {
             leitor.close();
         }
-    }
-
-    private static void imprimirHeader() {
-        System.out.println("==================================================");
-        System.out.println("          MOODIE AI - RANKING DE CINEMA           ");
-        System.out.println("==================================================");
-    }
-
-    private static void imprimirCard(Recomendacao rec, int rank) {
-        Filme f = rec.getFilme();
-        String medalha = (rank == 1) ? "🥇" : (rank == 2 ? "🥈" : "🥉");
-        
-        System.out.printf("%s %-15s | %d pts | %d min | %s\n", 
-                          medalha, 
-                          f.getTitulo(), 
-                          rec.getScore(), // Usando %d porque seu score é Integer
-                          f.getDuracaoMinutos(),
-                          f.getGeneros().get(0));
     }
 }
