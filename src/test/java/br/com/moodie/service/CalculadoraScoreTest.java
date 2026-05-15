@@ -32,14 +32,14 @@ class CalculadoraScoreTest {
 	
     // CT10
 	@Test
-	@DisplayName("Score de genero deve ser 100 quando todos os generos do filme tem peso 1.0 no perfil")
+	@DisplayName("Score final deve ser 70 quando gênero e duração são perfeitos (sem pop/afinidade)")
 	void deve_RetornarScoreMaximoDeGenero_Quando_FilmeTemApenasGenerosAmados() {
 		perfil.setPesoGenero(Genero.FICCAO_CIENTIFICA, 1.0);
 		perfil.setPesoGenero(Genero.DRAMA, 1.0);
 		
 		Filme filme = new Filme("F1", "Interestelar", 2014, 120, List.of(Genero.FICCAO_CIENTIFICA, Genero.DRAMA), ClassificacaoEtaria.DOZE, Idioma.EN, 0);
 		
-		int score = calculadora.calcular(filme, perfil);
+		int score = calculadora.calcular(filme, perfil, List.of());
 		
 		assertEquals(70, score);
 	}
@@ -52,7 +52,7 @@ class CalculadoraScoreTest {
 		perfil.setPesoGenero(Genero.FICCAO_CIENTIFICA, 1.0);
 		Filme filme = new Filme("F2", "Teste Duracao", 2026, duracaoFilme, List.of(Genero.FICCAO_CIENTIFICA), ClassificacaoEtaria.LIVRE, Idioma.PT_BR, 0);
 		
-		int score = calculadora.calcular(filme, perfil);
+		int score = calculadora.calcular(filme, perfil, List.of());
 		
 		assertEquals(scoreEsperado, score);
 	}
@@ -64,7 +64,7 @@ class CalculadoraScoreTest {
 	    Filme filme = new Filme("F1", "Terror", 2024, 120, List.of(Genero.TERROR), 
 	                            ClassificacaoEtaria.LIVRE, Idioma.PT_BR, 0);
 	    
-	    int score = calculadora.calcular(filme, perfil);
+	    int score = calculadora.calcular(filme, perfil, List.of());
 	    assertEquals(30, score, "O score deveria ser 30 para um peso de gênero 0.4");
 	}
 	
@@ -76,7 +76,7 @@ class CalculadoraScoreTest {
 	                                          ClassificacaoEtaria.LIVRE, Idioma.PT_BR, 0);
 	    perfil.setPesoGenero(Genero.FICCAO_CIENTIFICA, 1.0);
 	    
-	    int score = calculadora.calcular(filmeTrintaMinAcima, perfil);
+	    int score = calculadora.calcular(filmeTrintaMinAcima, perfil, List.of());
 	    
 	    assertTrue(score < 100, "O score deve sofrer penalidade por estar 30 min acima");
 	}
@@ -88,8 +88,25 @@ class CalculadoraScoreTest {
 	    Filme filmeLongo = new Filme("F3", "Infinito", 2024, 9999, List.of(Genero.ACAO), 
 	                                 ClassificacaoEtaria.LIVRE, Idioma.PT_BR, 0);
 	    
-	    int score = calculadora.calcular(filmeLongo, perfil);
+	    int score = calculadora.calcular(filmeLongo, perfil, List.of());
 	    
 	    assertTrue(score >= 0 && score <= 100, "O score nunca deve ser negativo ou maior que 100");
+	}
+	
+	// CT12
+	@Test
+	@DisplayName("Deve atingir score 100 quando tiver bonus de afinidade e popularidade maxima")
+	void deve_AtingirScoreMaximo_ComTodosOsBonus() {
+		perfil.setPesoGenero(Genero.ACAO, 1.0);
+		
+		Filme filmeAntigo = new Filme("F_ANTIGO", "Homem de Ferro", 2008, 126, List.of(Genero.ACAO), ClassificacaoEtaria.DOZE, Idioma.EN, 80);
+		List<Filme> catalogo = List.of(filmeAntigo);
+		perfil.adicionarNota("F_ANTIGO", 5);
+		
+		Filme blockbuster = new Filme("F_MAX", "Vingadores", 2012, 120, List.of(Genero.ACAO), ClassificacaoEtaria.DOZE, Idioma.EN, 100);
+		
+		int score = calculadora.calcular(blockbuster, perfil, catalogo);
+		
+		assertEquals(100, score, "Deve somar gênero (50) + tempo (20) + popularidade (15) + afinidade (15)");
 	}
 }

@@ -5,14 +5,14 @@ import br.com.moodie.enums.Genero;
 import br.com.moodie.enums.Idioma;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.Tag;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("unitario")
 class FilmeTest {
@@ -50,5 +50,20 @@ class FilmeTest {
             () -> assertEquals(Idioma.PT_BR, filme.getIdioma()),
             () -> assertEquals(100, filme.getPopularidade())
         );
+    }
+    
+    @ParameterizedTest
+    @CsvSource({
+        "2024, true",
+        "1880, false",
+        "2100, false"
+    })
+    @DisplayName("Deve validar se o ano de lançamento é plausível")
+    void deve_ValidarAnosDeLancamento(int ano, boolean valido) {
+        if(valido) {
+            assertTrue(ano >= 1888 && ano <= 2026);
+        } else {
+            assertFalse(ano >= 1888 && ano <= 2026);
+        }
     }
 }

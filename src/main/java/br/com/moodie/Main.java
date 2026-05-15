@@ -46,9 +46,9 @@ public class Main {
 			default: System.out.println("Opção inválida, vamos procurar de tudo um pouco!"); break;
 		}
 		
-		System.out.println("\n A processar as tuas respostas e a consultar a TMDB...");
+		System.out.println("\n A processar as tuas respostas e a consultar a nosso catalogo");
 		
-		CatalogoFilmeAPI catalogoTmdb = new TmdbService();
+		CatalogoFilmeAPI catalogo = new CatalogoMock();
 		CalculadoraScore calculadora = new CalculadoraScore();
 		FiltroFilmes filtro = new FiltroFilmes();
 		GeradorAleatorio gerador = new GeradorAleatorio() {
@@ -59,7 +59,7 @@ public class Main {
 		};
 		HistoricoUsuarioRepository historicoConsole = (u, recomendacoes) -> {};
 		NotificadorPush notificadorConsole = u -> {};
-		RecomendadorService recomendador = new RecomendadorService(catalogoTmdb, historicoConsole, notificadorConsole, gerador, calculadora, filtro);
+		RecomendadorService recomendador = new RecomendadorService(catalogo, historicoConsole, notificadorConsole, gerador, calculadora, filtro);
 		List<Recomendacao> recomendacoes = recomendador.recomendar(usuarioAtivo, 3);
 		
 		System.out.println("\n=========================================");

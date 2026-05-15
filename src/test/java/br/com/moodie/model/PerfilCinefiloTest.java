@@ -6,6 +6,7 @@ import br.com.moodie.exception.PerfilIncompletoException;
 import br.com.moodie.exception.PesoInvalidoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -114,6 +115,38 @@ class PerfilCinefiloTest {
         assertThrows(PerfilIncompletoException.class, () -> {
             perfilVazio.validarParaRecomendacao(); 
         });
+    }
+    
+    //CT09
+    @Test
+    @DisplayName("Deve adicionar o ID do filme ao histórico de assistidos")
+    void deve_AdicionarNoHistorico_Quando_FilmeAssistido() {
+    	perfil.marcarComoAssistido("F_MATRIX");
+    	
+    	assertTrue(perfil.getHistoricoAssistidos().contains("F_MATRIX"), "O histórico deve conter o ID do filme marcado como assistido");
+    }
+    
+    @Test
+    @DisplayName("Deve garantir que a classificação máxima inicia nula")
+    void deve_TerClassificacaoNula_AoIniciar() {
+        assertNull(perfil.getClassificacaoMaxima(), "A classificação não deve estar definida inicialmente");
+    }
+    
+    @Nested
+    @DisplayName("Quando os dados de entrada são inválidos")
+    class TestesDeExcecao {
+        
+        @Test
+        @DisplayName("Deve lançar erro para peso negativo")
+        void testePesoNegativo() {
+            assertThrows(PesoInvalidoException.class, () -> perfil.setPesoGenero(Genero.ACAO, -1.0));
+        }
+
+        @Test
+        @DisplayName("Deve lançar erro para duração inconsistente")
+        void testeDuracaoInvalida() {
+            assertThrows(DuracaoInvalidaException.class, () -> perfil.setFaixaDuracao(100, 50));
+        }
     }
     
 }

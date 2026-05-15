@@ -60,7 +60,7 @@
     			<artifactId>maven-surefire-plugin</artifactId>
     			<version>3.2.5</version>
     			<configuration>
-        			<argLine>@{argLine} -XX:+EnableDynamicAgentLoading --add-opens java.base/java.lang=ALL-UNNAMED -Dnet.bytebuddy.experimental=true</argLine>
+        			<argLine>-XX:+EnableDynamicAgentLoading --add-opens java.base/java.lang=ALL-UNNAMED -Dnet.bytebuddy.experimental=true</argLine>
     			</configuration>
 			</plugin>
 

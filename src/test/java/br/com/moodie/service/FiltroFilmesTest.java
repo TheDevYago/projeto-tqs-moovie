@@ -114,4 +114,16 @@ class FiltroFilmesTest {
         assertNotNull(resultado, "A lista retornada nunca deve ser null");
         assertTrue(resultado.isEmpty(), "A lista retornada deve ser vazia");
     }
+    
+    //CT17
+    @Test
+    @DisplayName("Deve permitir filmes com peso de gênero intermediário (maior que 0.0)")
+    void deve_ManterFilme_Quando_GeneroTemPesoIntermediario() {
+    	perfil.setPesoGenero(Genero.DRAMA, 0.5);
+    	
+    	Filme filmeDrama = new Filme("F05", "Drama Ok", 2026, 120, List.of(Genero.DRAMA), ClassificacaoEtaria.LIVRE, Idioma.PT_BR, 80);
+    	List<Filme> resultado = filtro.filtrar(List.of(filmeDrama), perfil);
+    	
+    	assertEquals(1, resultado.size(), "Filmes com peso 0.5 deveriam passar pelo filtro");
+    }
 }

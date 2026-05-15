@@ -42,11 +42,11 @@ public class FiltroFilmes {
 	private boolean generoExatoPermitido(Filme filme, PerfilCinefilo perfil) {
 		if (filme.getGeneros().isEmpty()) return false;
 		for (Genero genero: filme.getGeneros()) {
-			if (perfil.getPesoGenero(genero) == 1.0) {
-				return true;
+			if (perfil.getPesoGenero(genero) == 0.0) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	private boolean duracaoPermitida (Filme filme, PerfilCinefilo perfil) {
